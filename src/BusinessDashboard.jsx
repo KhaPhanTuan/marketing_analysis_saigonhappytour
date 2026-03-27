@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, ScatterChart, Scatter, ZAxis
 } from 'recharts';
-import { ArrowLeft, Lightbulb, TrendingUp, MessageCircle, Star } from 'lucide-react';
+import { ArrowLeft, Lightbulb, TrendingUp, MessageCircle, Star, ThumbsUp, MessageSquare, ExternalLink, Tag, Layers } from 'lucide-react';
 
 // --- MOCK DATA ---
 const COLORS = ['#FFD100', '#004B23', '#FF9900', '#4ADE80', '#3B82F6'];
@@ -22,7 +22,36 @@ const scatterData = [
   { name: 'Breakfast Tour', posts: 30, impact: 250 },
   { name: 'Homecook', posts: 20, impact: 150 },
 ];
-
+ // --- BỔ SUNG: DỮ LIỆU CHI TIẾT CHO BEST POST ---
+const bestPostsData = {
+  'Food Tour': {
+    content: "Chuyến đi Food Tour hôm nay quá tuyệt vời, anh HDV siêu nhiệt tình, đồ ăn ngon đỉnh cao! 10/10 sẽ quay lại. Mọi người nhất định phải thử món bánh xèo nha!!!",
+    dimension: "Customer Experience & Local Food",
+    productType: "Food & Culinary",
+    link: "#", // Thay bằng link thật sau này
+    likeCount: "1,250",
+    cmtCount: "342",
+    aiInsight: "Bài viết này thành công nhờ nhấn mạnh vào 'Sự nhiệt tình của HDV' và review chân thực món ăn bản địa. Rất thu hút tệp khách thích trải nghiệm văn hóa ẩm thực."
+  },
+  'Legacy Tour': {
+    content: "Một góc nhìn rất khác về Sài Gòn. Cà phê vợt ngon, chung cư cũ mang đậm dấu ấn thời gian. Một trải nghiệm văn hóa sâu sắc!",
+    dimension: "Culture & History",
+    productType: "City Exploration",
+    link: "#",
+    likeCount: "890",
+    cmtCount: "156",
+    aiInsight: "Khách hàng bị ấn tượng mạnh bởi sự hoài niệm. Hãy đẩy mạnh hình ảnh 'Sài Gòn xưa' và 'Cà phê vợt' trong các chiến dịch quảng cáo tiếp theo."
+  },
+  'Mekong Delta': {
+    content: "Đi tour Mekong miền Tây sông nước cực kỳ thư giãn. Cảnh đẹp, trái cây ngon, và đi thuyền ba lá rất thú vị. Gia đình mình rất thích.",
+    dimension: "Nature & Relaxation",
+    productType: "Regional Tour",
+    link: "#",
+    likeCount: "2,100",
+    cmtCount: "512",
+    aiInsight: "Nội dung phù hợp tuyệt đối với tệp khách gia đình (Family-friendly). Nên dùng hình ảnh đi thuyền ba lá làm ảnh đại diện quảng cáo."
+  }
+};
 const marketShareData = [
   { name: 'Food & Culinary', value: 45 },
   { name: 'Culture & History', value: 30 },
@@ -117,20 +146,57 @@ export default function BusinessDashboard({ onClose }) {
             </div>
           </div>
 
-          {/* Top Post & AI Insight */}
+          {/* Top Post & AI Insight (Đã nâng cấp) */}
           <div className="mt-8 bg-[#004B23]/5 p-6 rounded-xl border border-[#004B23]/10">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-[#004B23] flex items-center gap-2"><Star className="text-[#FFD100]" /> Bài viết nổi bật nhất để học hỏi</h3>
-              <select className="p-2 border rounded-lg outline-none bg-white" value={selectedTour} onChange={(e) => setSelectedTour(e.target.value)}>
+              <select className="p-2 border rounded-lg outline-none bg-white font-medium focus:ring-2 focus:ring-[#FFD100]" value={selectedTour} onChange={(e) => setSelectedTour(e.target.value)}>
                 {scatterData.map(t => <option key={t.name} value={t.name}>{t.name}</option>)}
               </select>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-[#FFD100] mb-4">
-              <p className="italic text-gray-600">"Chuyến đi {selectedTour} hôm nay quá tuyệt vời, anh HDV siêu nhiệt tình, đồ ăn ngon đỉnh cao! 10/10 sẽ quay lại..."</p>
-            </div>
-            <div className="flex gap-3 text-[#004B23] font-medium items-start">
+            
+            {/* KIỂM TRA DỮ LIỆU ĐỂ RENDER */}
+            {(() => {
+              // Lấy dữ liệu bài post theo tour được chọn, nếu không có thì lấy Food Tour làm mặc định
+              const post = bestPostsData[selectedTour] || bestPostsData['Food Tour'];
+              
+              return (
+                <div className="bg-white p-5 rounded-lg shadow-sm border-l-4 border-[#FFD100] mb-4 space-y-4">
+                  
+                  {/* Dòng 1: Dimension & Product Type */}
+                  <div className="flex flex-wrap gap-2 text-xs font-bold">
+                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center gap-1 border border-blue-100">
+                      <Tag size={14} /> Dimension: {post.dimension}
+                    </span>
+                    <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full flex items-center gap-1 border border-purple-100">
+                      <Layers size={14} /> Product Type: {post.productType}
+                    </span>
+                  </div>
+
+                  {/* Dòng 2: Nội dung Content */}
+                  <p className="italic text-gray-700 text-lg">"{post.content}"</p>
+
+                  {/* Dòng 3: Like, Comment, Link */}
+                  <div className="flex flex-wrap items-center gap-6 pt-3 border-t border-gray-100 text-sm font-bold text-gray-600">
+                    <div className="flex items-center gap-1 text-red-500 bg-red-50 px-3 py-1 rounded-lg">
+                      <ThumbsUp size={16} /> {post.likeCount} Likes
+                    </div>
+                    <div className="flex items-center gap-1 text-blue-500 bg-blue-50 px-3 py-1 rounded-lg">
+                      <MessageSquare size={16} /> {post.cmtCount} Comments
+                    </div>
+                    
+                    <a href={post.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[#004B23] hover:text-[#FF9900] transition-colors ml-auto underline decoration-2 underline-offset-4">
+                      Xem bài viết gốc <ExternalLink size={16} />
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* AI Insight hiển thị tương ứng */}
+            <div className="flex gap-3 text-[#004B23] font-medium items-start bg-white p-4 rounded-lg shadow-sm border border-gray-100">
               <Lightbulb className="shrink-0 text-[#FF9900]" />
-              <p><strong>AI INSIGHT:</strong> Bài viết này thành công nhờ nhấn mạnh vào "Sự nhiệt tình của HDV" và hình ảnh món ăn trực quan. Hãy áp dụng content này cho các chiến dịch quảng cáo tiếp theo của {selectedTour}.</p>
+              <p><strong>💡 AI INSIGHT:</strong> {bestPostsData[selectedTour]?.aiInsight || bestPostsData['Food Tour'].aiInsight}</p>
             </div>
           </div>
         </section>
@@ -174,7 +240,7 @@ export default function BusinessDashboard({ onClose }) {
         {/* --- PHẦN BẢNG COMMENT REALTIME --- */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="bg-[#004B23] p-6 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-[#FFD100] flex items-center gap-2"><MessageCircle /> 4. Realtime Comments & AI Actions</h2>
+            <h2 className="text-xl font-bold text-[#FFD100] flex items-center gap-2"><MessageCircle /> 3. Realtime Comments & AI Actions</h2>
             <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm animate-pulse">Cập nhật lúc: Vừa xong</span>
           </div>
           
